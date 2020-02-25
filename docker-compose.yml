@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+    cluster:
+        build: ./cluster
+        ports:
+            - "9000:9000"
