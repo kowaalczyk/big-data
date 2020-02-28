@@ -9,7 +9,7 @@ mkdir $hdfs_dir/namenode
 mkdir $hdfs_dir/datanode
 
 user=ala
-cd $home
+cd $homea
 
 while read name
 do

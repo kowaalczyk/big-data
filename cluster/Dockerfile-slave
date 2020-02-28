@@ -1,0 +1,28 @@
+FROM openjdk:8
+
+# this sets up hadoop in the semi-distributed mode
+COPY ./hadoop-2.8.5.tar.gz /usr/src/cluster/hadoop-2.8.5.tar.gz
+RUN tar -xvzf /usr/src/cluster/hadoop-2.8.5.tar.gz -C /usr/src/cluster
+RUN rm /usr/src/cluster/hadoop-2.8.5.tar.gz
+
+COPY . /usr/src/cluster
+WORKDIR /usr/src/cluster
+
+ENV PROJECT_HOME "/usr/src/cluster"
+ENV HADOOP_INSTALL "/usr/src/cluster/hadoop-2.8.5"
+ENV HADOOP_PREFIX "${HADOOP_INSTALL}"
+ENV HADOOP_CONF_DIR "${HADOOP_INSTALL}/etc/hadoop"
+ENV PATH "${JAVA_HOME}/bin:${HADOOP_INSTALL}/bin:${HADOOP_INSTALL}/sbin:${PATH}"
+ENV HDFS_DIR "/usr/src/hdfsdata"
+
+RUN chmod +x install.sh
+RUN ./install.sh
+
+
+# copy.sh
+RUN chmod +x hdfs-slave.sh
+RUN ./hdfs-slave.sh
+
+
+# TODO
+CMD [ "tail", "-F", "local.env" ]

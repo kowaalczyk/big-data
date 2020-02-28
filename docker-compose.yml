@@ -1,7 +1,33 @@
-version: '2'
+version: '3'
 
 services:
-    cluster:
-        build: ./cluster
+    master:
+        build:
+            context: ./cluster
+            dockerfile: Dockerfile-master
         ports:
             - "9000:9000"
+        networks:
+            - cluster
+        volumes:
+            - "./hdfsdata:/usr/src/hdfsdata"
+    slave1:
+        build:
+            context: ./cluster
+            dockerfile: Dockerfile-slave
+        networks:
+            - cluster
+        volumes:
+            - "./hdfsdata:/usr/src/hdfsdata"
+    slave2:
+        build:
+            context: ./cluster
+            dockerfile: Dockerfile-slave
+        networks:
+            - cluster
+        volumes:
+            - "./hdfsdata:/usr/src/hdfsdata"
+    
+networks:
+    cluster:
+        driver: bridge

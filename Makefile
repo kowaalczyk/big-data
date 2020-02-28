@@ -1,5 +1,5 @@
 download:
-	wget -P ./cluster http://ftp.man.poznan.pl/apache/hadoop/common/hadoop-2.9.2/hadoop-2.9.2.tar.gz
+	wget -P ./cluster https://archive.apache.org/dist/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz
 
 build:
 	docker-compose build

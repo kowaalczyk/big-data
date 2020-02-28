@@ -1,22 +1,26 @@
 # sed -i '$ a . path.sh' .bashrc
+env | grep HADOOP | sed 's/.*/export &/' >> ~/.bashrc
 
-export HADOOP_PREFIX=$HADOOP_INSTALL
-
-etc_hadoop=${HADOOP_INSTALL}/etc/hadoop
+# HADOOP_CONF_DIR=${HADOOP_INSTALL}/etc/hadoop
 #hdfs_dir="$( mktemp -d /tmp/hadoop.XXXXXX )"
-hdfs_dir="${PROJECT_HOME}/hdfsdata"
 master="master"  # TODO: env
 # master=$(head -n 1 ${PROJECT_HOME}/master)
-# cp $PROJECT_HOME/slaves_no_master $HADOOP_INSTALL/etc/hadoop/slaves
+cp $PROJECT_HOME/slaves $HADOOP_INSTALL/etc/hadoop/slaves
 
 echo 
 echo "***************************************************************************"
-echo modifying ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
-echo setting export JAVA_HOME=${JAVA_HOME}
-echo "***************************************************************************"
-sed -i -e "s|^export JAVA_HOME=\${JAVA_HOME}|export JAVA_HOME=$JAVA_HOME|g" ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
 
-cat <<EOF > ${etc_hadoop}/core-site.xml
+echo modifying ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
+
+echo setting export JAVA_HOME=${JAVA_HOME}
+sed -i -e "s|^export JAVA_HOME=\${JAVA_HOME}|export JAVA_HOME=$JAVA_HOME|g" ${HADOOP_CONF_DIR}/hadoop-env.sh
+
+echo setting export HADOOP_CONF_DIR=${HADOOP_CONF_DIR}
+sed -i -e "s|/etc/hadoop|$HADOOP_CONF_DIR|g" ${HADOOP_CONF_DIR}/hadoop-env.sh
+
+echo "***************************************************************************"
+
+cat <<EOF > ${HADOOP_CONF_DIR}/core-site.xml
 <configuration>
   <property>
     <name>fs.defaultFS</name>
@@ -26,7 +30,7 @@ cat <<EOF > ${etc_hadoop}/core-site.xml
 </configuration>
 EOF
 
-cat <<EOF > ${etc_hadoop}/hdfs-site.xml
+cat <<EOF > ${HADOOP_CONF_DIR}/hdfs-site.xml
 <configuration>
   <property>
     <name>dfs.replication</name>
@@ -35,13 +39,13 @@ cat <<EOF > ${etc_hadoop}/hdfs-site.xml
 
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file://${hdfs_dir}/datanode</value>
+    <value>file://${HDFS_DIR}/datanode</value>
     <description>Comma separated list of paths on the local filesystem of a DataNode where it should store its blocks.</description>
   </property>
  
   <property>
     <name>dfs.namenode.name.dir</name>
-    <value>file://${hdfs_dir}/namenode</value>
+    <value>file://${HDFS_DIR}/namenode</value>
     <description>Path on the local filesystem where the NameNode stores the namespace and transaction logs persistently.</description>
   </property>
 
@@ -54,7 +58,7 @@ cat <<EOF > ${etc_hadoop}/hdfs-site.xml
 EOF
 
 
-cat <<EOF > ${etc_hadoop}/mapred-site.xml
+cat <<EOF > ${HADOOP_CONF_DIR}/mapred-site.xml
 <configuration>
     <property>
         <name>mapreduce.framework.name</name>
@@ -80,7 +84,7 @@ cat <<EOF > ${etc_hadoop}/mapred-site.xml
 EOF
 
 
-cat <<EOF > ${etc_hadoop}/yarn-site.xml
+cat <<EOF > ${HADOOP_CONF_DIR}/yarn-site.xml
 <configuration>
     <property>
         <name>yarn.nodemanager.aux-services</name>

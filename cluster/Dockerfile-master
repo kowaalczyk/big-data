@@ -1,0 +1,44 @@
+FROM openjdk:8
+
+# this sets up hadoop in the semi-distributed mode
+COPY ./hadoop-2.8.5.tar.gz /usr/src/cluster/hadoop-2.8.5.tar.gz
+RUN tar -xvzf /usr/src/cluster/hadoop-2.8.5.tar.gz -C /usr/src/cluster
+RUN rm /usr/src/cluster/hadoop-2.8.5.tar.gz
+
+COPY . /usr/src/cluster
+WORKDIR /usr/src/cluster
+
+ENV PROJECT_HOME "/usr/src/cluster"
+ENV HADOOP_INSTALL "/usr/src/cluster/hadoop-2.8.5"
+ENV HADOOP_PREFIX "${HADOOP_INSTALL}"
+ENV HADOOP_CONF_DIR "${HADOOP_INSTALL}/etc/hadoop"
+ENV PATH "${JAVA_HOME}/bin:${HADOOP_INSTALL}/bin:${HADOOP_INSTALL}/sbin:${PATH}"
+ENV HDFS_DIR "/usr/src/hdfsdata"
+
+# https://alanxelsys.com/hadoop-v2-single-node-installation-on-centos-6-5/
+# ENV HADOOP_MAPRED_HOME "$HADOOP_INSTALL"
+# ENV HADOOP_COMMON_HOME "$HADOOP_INSTALL"
+# ENV HADOOP_HDFS_HOME "$HADOOP_INSTALL"
+# ENV YARN_HOME "$HADOOP_INSTALL"
+# ENV HADOOP_COMMON_LIB_NATIVE_DIR "$HADOOP_INSTALL/lib/native"
+# ENV PATH "$PATH:$HADOOP_INSTALL/sbin"
+# ENV PATH "$PATH:$HADOOP_INSTALL/bin"
+
+
+RUN chmod +x install.sh
+RUN ./install.sh
+
+
+# copy.sh
+RUN chmod +x hdfs-master.sh
+RUN ./hdfs-master.sh
+# RUN hdfs namenode -format
+
+
+# master node
+EXPOSE 22
+EXPOSE 9000
+
+
+# TODO
+CMD [ "tail", "-F", "local.env" ]
