@@ -1,24 +1,27 @@
-# sed -i '$ a . path.sh' .bashrc
-env | grep HADOOP | sed 's/.*/export &/' >> ~/.bashrc
-
-# HADOOP_CONF_DIR=${HADOOP_INSTALL}/etc/hadoop
-#hdfs_dir="$( mktemp -d /tmp/hadoop.XXXXXX )"
-master="master"  # TODO: env
-# master=$(head -n 1 ${PROJECT_HOME}/master)
-cp $PROJECT_HOME/slaves $HADOOP_INSTALL/etc/hadoop/slaves
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
 
 echo 
 echo "***************************************************************************"
+# TODO: Config / environment variable (but don't export, it can break hadoop)
+HADOOP_CONF_DIR=${HADOOP_INSTALL}/etc/hadoop
+echo "modifying ${HADOOP_CONF_DIR}/hadoop-env.sh"
 
-echo modifying ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
-
-echo setting export JAVA_HOME=${JAVA_HOME}
+echo "setting export JAVA_HOME=${JAVA_HOME}"
 sed -i -e "s|^export JAVA_HOME=\${JAVA_HOME}|export JAVA_HOME=$JAVA_HOME|g" ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 echo setting export HADOOP_CONF_DIR=${HADOOP_CONF_DIR}
 sed -i -e "s|/etc/hadoop|$HADOOP_CONF_DIR|g" ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 echo "***************************************************************************"
+cat ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
+echo "***************************************************************************"
+
+# TODO: Put these configs in cluster/hadoop_conf
+# TODO: Don't export this variable, it will break namenode import hadoop code
+HDFS_DIR=/usr/src/hdfsdata
+master="master"
 
 cat <<EOF > ${HADOOP_CONF_DIR}/core-site.xml
 <configuration>
@@ -109,6 +112,3 @@ cat <<EOF > ${HADOOP_CONF_DIR}/yarn-site.xml
    </property>
 </configuration>
 EOF
-
-
-

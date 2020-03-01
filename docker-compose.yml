@@ -2,31 +2,33 @@ version: '3'
 
 services:
     master:
-        build:
-            context: ./cluster
-            dockerfile: Dockerfile-master
+        build: ./cluster
         ports:
             - "9000:9000"
+            - "2200:22"
         networks:
             - cluster
         volumes:
             - "./hdfsdata:/usr/src/hdfsdata"
+        command: "./master.sh"
     slave1:
-        build:
-            context: ./cluster
-            dockerfile: Dockerfile-slave
+        build: ./cluster
+        ports:
+            - "2201:22"
         networks:
             - cluster
         volumes:
             - "./hdfsdata:/usr/src/hdfsdata"
+        command: "tail -f /dev/null"  # TODO
     slave2:
-        build:
-            context: ./cluster
-            dockerfile: Dockerfile-slave
+        build: ./cluster
+        ports:
+            - "2202:22"
         networks:
             - cluster
         volumes:
             - "./hdfsdata:/usr/src/hdfsdata"
+        command: "tail -f /dev/null"  # TODO
     
 networks:
     cluster:
