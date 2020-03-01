@@ -8,11 +8,9 @@ RUN apt -y dist-upgrade
 RUN apt install -y openssh-server openjdk-8-jdk
 ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk-amd64/"
 
-# create ssh key
+# configure ssh
 RUN ssh-keygen -t rsa -f $HOME/.ssh/id_rsa -P "" \
     && cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-
-# add ssh config
 COPY ssh/config /root/.ssh/config
 
 # unpack hadoop
@@ -21,7 +19,7 @@ RUN tar -xzf /usr/src/cluster/hadoop-2.8.5.tar.gz -C /usr/src/cluster
 RUN rm /usr/src/cluster/hadoop-2.8.5.tar.gz
 
 # add scripts from cluster directory
-COPY . /usr/src/cluster
+COPY ./*.sh ./slaves /usr/src/cluster/
 WORKDIR /usr/src/cluster
 
 # prepare environment variables for hadoop installation
@@ -40,12 +38,16 @@ ENV HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native"
 RUN chmod +x install.sh
 RUN ./install.sh
 
-# format hdfs namenode during build
-# TODO: volumes are stateful, this may not be the perfect place to do that
-RUN hdfs namenode -format
-
-# master node
+# to expose more ports: http://fibrevillage.com/storage/637-hadoop-default-ports-reference
 EXPOSE 22
 EXPOSE 9000
+EXPOSE 50070
 
+# entrypoints (setup + teardown on ctrl+c) for master and slave
 RUN chmod +x master.sh
+RUN chmod +x slave.sh
+
+# entrypoint needs to be specified on execution (via docker run or docker-compose)
+# commands can use flags mounted to /usr/src/flags to remember cluster state
+RUN mkdir /usr/src/flags
+ENV FLAGS_DIR="/usr/src/flags"

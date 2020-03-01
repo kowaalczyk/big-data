@@ -6,11 +6,16 @@ services:
         ports:
             - "9000:9000"
             - "2200:22"
+            - "50070:50070"
         networks:
             - cluster
         volumes:
-            - "./hdfsdata:/usr/src/hdfsdata"
+            - "./flags:/usr/src/flags"
+            - "hdfsdata:/usr/src/hdfsdata"
         command: "./master.sh"
+        depends_on: 
+            - slave1
+            - slave2
     slave1:
         build: ./cluster
         ports:
@@ -18,8 +23,8 @@ services:
         networks:
             - cluster
         volumes:
-            - "./hdfsdata:/usr/src/hdfsdata"
-        command: "tail -f /dev/null"  # TODO
+            - "hdfsdata:/usr/src/hdfsdata"
+        command: ./slave.sh
     slave2:
         build: ./cluster
         ports:
@@ -27,9 +32,12 @@ services:
         networks:
             - cluster
         volumes:
-            - "./hdfsdata:/usr/src/hdfsdata"
-        command: "tail -f /dev/null"  # TODO
-    
+            - "hdfsdata:/usr/src/hdfsdata"
+        command: ./slave.sh
+
 networks:
     cluster:
         driver: bridge
+
+volumes: 
+    hdfsdata:

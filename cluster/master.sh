@@ -2,18 +2,41 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-function start_hadoop() {
+function format_hdfs() {
     echo
     echo "***************************************************************************"
-    echo service ssh start
+    echo rm -R /tmp/*
     echo "***************************************************************************"
-    service ssh start
+    rm -R /tmp/*
+
+    # HDFS_DIR=/usr/src/hdfsdata
+    # echo
+    # echo "***************************************************************************"
+    # echo "preparing namenode and datanode in $HDFS_DIR"
+    # echo "***************************************************************************"
+    # rm -fr $HDFS_DIR
+    # mkdir $HDFS_DIR
+    # mkdir $HDFS_DIR/namenode
+    # mkdir $HDFS_DIR/datanode
 
     echo
     echo "***************************************************************************"
     echo hdfs namenode -format
     echo "***************************************************************************"
     echo 'Y' | hdfs namenode -format
+}
+
+function start_master() {
+    echo
+    echo "***************************************************************************"
+    echo service ssh start
+    echo "***************************************************************************"
+    service ssh start
+
+    if [[ -e "$FLAGS_DIR/format-hdfs" ]]; then
+        format_hdfs
+        rm "$FLAGS_DIR/format-hdfs"
+    fi
 
     echo
     echo "***************************************************************************"
@@ -39,12 +62,12 @@ function start_hadoop() {
         echo hdfs dfsadmin -report
         echo "***************************************************************************"
         hdfs dfsadmin -report
-        
+
         sleep 60
     done
 }
 
-function stop_hadoop() {
+function stop_master() {
     echo
     echo "***************************************************************************"
     echo stop-yarn.sh
@@ -64,6 +87,7 @@ function stop_hadoop() {
     service ssh stop
 }
 
-trap stop_hadoop SIGTERM
+trap stop_master SIGTERM
 
-start_hadoop
+start_master
+stop_master

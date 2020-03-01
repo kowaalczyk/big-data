@@ -11,12 +11,18 @@ echo "modifying ${HADOOP_CONF_DIR}/hadoop-env.sh"
 echo "setting export JAVA_HOME=${JAVA_HOME}"
 sed -i -e "s|^export JAVA_HOME=\${JAVA_HOME}|export JAVA_HOME=$JAVA_HOME|g" ${HADOOP_CONF_DIR}/hadoop-env.sh
 
-echo setting export HADOOP_CONF_DIR=${HADOOP_CONF_DIR}
+echo "setting export HADOOP_CONF_DIR=${HADOOP_CONF_DIR}"
 sed -i -e "s|/etc/hadoop|$HADOOP_CONF_DIR|g" ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 echo "***************************************************************************"
 cat ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
 echo "***************************************************************************"
+
+echo
+echo "***************************************************************************"
+echo "adding list of slaves to ${HADOOP_CONF_DIR}"
+echo "***************************************************************************"
+cp slaves $HADOOP_CONF_DIR/slaves
 
 # TODO: Put these configs in cluster/hadoop_conf
 # TODO: Don't export this variable, it will break namenode import hadoop code
@@ -37,7 +43,7 @@ cat <<EOF > ${HADOOP_CONF_DIR}/hdfs-site.xml
 <configuration>
   <property>
     <name>dfs.replication</name>
-    <value>3</value>
+    <value>2</value>
   </property>
 
   <property>
@@ -112,3 +118,18 @@ cat <<EOF > ${HADOOP_CONF_DIR}/yarn-site.xml
    </property>
 </configuration>
 EOF
+
+echo
+echo "***************************************************************************"
+echo "preparing namenode and datanode in $HDFS_DIR"
+echo "***************************************************************************"
+rm -fr $HDFS_DIR
+mkdir $HDFS_DIR
+mkdir $HDFS_DIR/namenode
+mkdir $HDFS_DIR/datanode
+
+# echo
+# echo "***************************************************************************"
+# echo hdfs namenode -format
+# echo "***************************************************************************"
+# echo 'Y' | hdfs namenode -format
