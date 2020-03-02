@@ -9,15 +9,14 @@ function format_hdfs() {
     echo "***************************************************************************"
     rm -R /tmp/*
 
-    # HDFS_DIR=/usr/src/hdfsdata
-    # echo
-    # echo "***************************************************************************"
-    # echo "preparing namenode and datanode in $HDFS_DIR"
-    # echo "***************************************************************************"
-    # rm -fr $HDFS_DIR
-    # mkdir $HDFS_DIR
-    # mkdir $HDFS_DIR/namenode
-    # mkdir $HDFS_DIR/datanode
+    HDFS_DIR=/usr/src/hdfsdata
+    echo
+    echo "***************************************************************************"
+    echo "preparing namenode and datanode in $HDFS_DIR"
+    echo "***************************************************************************"
+    rm -fr $HDFS_DIR/*
+    mkdir $HDFS_DIR/namenode
+    mkdir $HDFS_DIR/datanode
 
     echo
     echo "***************************************************************************"
@@ -84,7 +83,7 @@ function stop_master() {
     echo "***************************************************************************"
     echo service ssh stop
     echo "***************************************************************************"
-    service ssh stop
+    service service ssh stop
 }
 
 trap stop_master SIGTERM

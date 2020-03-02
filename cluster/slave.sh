@@ -17,7 +17,7 @@ function stop_slave() {
     echo "***************************************************************************"
     echo service ssh stop
     echo "***************************************************************************"
-    service ssh stop
+    service service ssh stop
 }
 
 trap stop_slave SIGTERM
