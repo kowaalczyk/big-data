@@ -24,16 +24,11 @@ echo "adding list of slaves to ${HADOOP_CONF_DIR}"
 echo "***************************************************************************"
 cp slaves $HADOOP_CONF_DIR/slaves
 
-# TODO: Put these configs in cluster/hadoop_conf
-# TODO: Don't export this variable, it will break namenode import hadoop code
-HDFS_DIR=/usr/src/hdfsdata
-master="master"
-
 cat <<EOF > ${HADOOP_CONF_DIR}/core-site.xml
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://${master}:9000</value>
+    <value>hdfs://${MASTER_HOST_NAME}:9000</value>
     <description>NameNode URI</description>
   </property>
 </configuration>
@@ -48,13 +43,13 @@ cat <<EOF > ${HADOOP_CONF_DIR}/hdfs-site.xml
 
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file://${HDFS_DIR}/datanode</value>
+    <value>file://${CUSTOM_HDFS_DIR}/datanode</value>
     <description>Comma separated list of paths on the local filesystem of a DataNode where it should store its blocks.</description>
   </property>
  
   <property>
     <name>dfs.namenode.name.dir</name>
-    <value>file://${HDFS_DIR}/namenode</value>
+    <value>file://${CUSTOM_HDFS_DIR}/namenode</value>
     <description>Path on the local filesystem where the NameNode stores the namespace and transaction logs persistently.</description>
   </property>
 
@@ -101,7 +96,7 @@ cat <<EOF > ${HADOOP_CONF_DIR}/yarn-site.xml
     </property>
     <property>
         <name>yarn.resourcemanager.hostname</name>
-        <value>${master}</value>
+        <value>${MASTER_HOST_NAME}</value>
     </property>
     <property>
         <name>yarn.nodemanager.vmem-check-enabled</name>
@@ -121,15 +116,9 @@ EOF
 
 echo
 echo "***************************************************************************"
-echo "preparing namenode and datanode in $HDFS_DIR"
+echo "preparing namenode and datanode in $CUSTOM_HDFS_DIR"
 echo "***************************************************************************"
-rm -fr $HDFS_DIR
-mkdir $HDFS_DIR
-mkdir $HDFS_DIR/namenode
-mkdir $HDFS_DIR/datanode
-
-# echo
-# echo "***************************************************************************"
-# echo hdfs namenode -format
-# echo "***************************************************************************"
-# echo 'Y' | hdfs namenode -format
+rm -fr $CUSTOM_HDFS_DIR
+mkdir $CUSTOM_HDFS_DIR
+mkdir $CUSTOM_HDFS_DIR/namenode
+mkdir $CUSTOM_HDFS_DIR/datanode
