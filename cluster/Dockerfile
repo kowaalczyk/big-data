@@ -52,11 +52,8 @@ RUN chmod +x slave.sh
 RUN mkdir /usr/src/flags
 ENV FLAGS_DIR="/usr/src/flags"
 
-# build directory for jars can be sync with host using volumes, use it to execute applications on hadoop
-RUN mkdir /usr/src/src
-ENV SRC_DIR="/usr/src/src"
-
-# source directory is also available, since compilation on the cluster may be necessary
-# (guarantees correct imports, java version, etc.)
-RUN mkdir /usr/src/build
-ENV BUILD_DIR="/usr/src/build"
+# applications directory where all user applications will be linked
+# java applications can be compiled locally
+# or remotely (in the cluster) as both sources and jars will be synchronized via docker volume
+RUN mkdir /usr/src/applications/
+ENV APPLICATIONS_DIR="/usr/src/applications/"

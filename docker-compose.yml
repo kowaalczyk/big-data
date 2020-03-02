@@ -11,8 +11,7 @@ services:
             - cluster
         volumes:
             - "./flags:/usr/src/flags"
-            - "./build:/usr/src/build"
-            - "./src:/usr/src/src"
+            - "./applications:/usr/src/applications"
             - "hdfsdata:/usr/src/hdfsdata"
         command: "./master.sh"
         depends_on: 
