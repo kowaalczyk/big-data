@@ -5,12 +5,15 @@ Assignments for big data class, spring semester 2019-20, MIMUW.
 Contains dockerized hadoop+mapreduce setup that can be deployed
 using docker-compose or using ssh (eg. on `students` server).
 
+You can find detailed descriptions of assignments and lectures on
+the [course website](https://sites.google.com/site/pdd20192020/).
+
 
 ## Setup
 
 ### Preparation
 
-1. Download hadoop to `cluster` directory
+1. Download hadoop to `cluster` directory, and zeppelin to `zeppelin` directory
 ```shell
 make download
 ```
@@ -59,6 +62,14 @@ The cluster web ui is exposed at: [http://localhost:50070/](http://localhost:500
 Applications located in `applications/*` subdirectories are mounted under `usr/src/applications`,
 which makes them synchronized with the host and accessible from the container.
 
+#### Zeppelin & Spark
+
+Zeppelin server is currently configured as a separate service, not even running
+on HDFS. Volumes for `data` and `notebooks` are created for sharing files
+between container and the host.
+
+*NOTE: Currently, all notebooks are in .gitignore (only applications are versioned)*
+
 
 ### Running locally / on virtual machines
 
@@ -91,3 +102,14 @@ hdfs dfs -mkdir /user
 hdfs dfs -put hadoop-2.8.5/etc/hadoop /user/
 yarn jar hadoop-2.8.5/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.5.jar grep /user/hadoop/hadoop-env.sh output 'dfs[a-z.]+'
 ```
+
+#### Zeppelin & Spark
+
+Current setup does not allow manual (local) installation of zeppelin & spark.
+
+
+## TODOs
+
+- [ ] add scripts for setting up on students / local server
+    - [ ] organize makefile and other config files (zeppelin version, dockerignore, etc.)
+- [ ] implement relational algebra in spark (on tuples / arrays / dictionaries - whatever is preferred) - details in json notebook (attachment to latest lab)

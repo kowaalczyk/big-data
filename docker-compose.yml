@@ -35,6 +35,13 @@ services:
         volumes:
             - "hdfsdata:/usr/src/hdfsdata"
         command: ./slave.sh
+    zeppelin:
+        build: ./zeppelin
+        ports:
+            - "8080:8080"
+        volumes:
+            - "./notebooks:/usr/src/notebooks"
+            - "./data:/usr/src/data"
 
 networks:
     cluster:

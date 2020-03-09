@@ -1,2 +1,5 @@
 .idea
 cluster/hadoop-*
+zeppelin/zeppelin-*
+data
+notebooks

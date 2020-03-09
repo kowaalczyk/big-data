@@ -37,7 +37,7 @@ ENV HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native"
 # install & setup hadoop
 ENV MASTER_HOST_NAME="master"
 ENV CUSTOM_HDFS_DIR="/usr/src/hdfsdata"
-RUN chmod +x install.shx
+RUN chmod +x install.sh
 RUN ./install.sh
 
 # to expose more ports: http://fibrevillage.com/storage/637-hadoop-default-ports-reference
