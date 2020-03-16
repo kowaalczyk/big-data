@@ -65,8 +65,19 @@ which makes them synchronized with the host and accessible from the container.
 #### Zeppelin & Spark
 
 Zeppelin server is currently configured as a separate service, not even running
-on HDFS. Volumes for `data` and `notebooks` are created for sharing files
+on HDFS. Volumes for `data` and `zeppelin/notebooks` are created for sharing files
 between container and the host.
+
+*NOTE: Currently, all notebooks are in .gitignore (only applications are versioned)*
+
+
+#### Jupyter & Spark
+
+Jupyter is currently configured as a separate service (single Spark node), 
+not even running on HDFS - same as for zeppelin+spark service.
+Volumes for `data` (same one as for `zeppelin` service) and `jupyter/notebooks` 
+(different from `zeppelin`, as the notebook format is not the same) 
+are created for sharing files between container and the host.
 
 *NOTE: Currently, all notebooks are in .gitignore (only applications are versioned)*
 
@@ -108,8 +119,21 @@ yarn jar hadoop-2.8.5/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.5.jar
 Current setup does not allow manual (local) installation of zeppelin & spark.
 
 
+## Troubleshooting
+
+### Apt complainign about invalid IP address (repository not found)
+
+This is because repositories can change IP, but since Docker build context 
+has not changed, the result of `apt update` will be loaded from cache.
+
+To fix, simply run build without cache:
+```shell
+docker-compose build --no-cache [services]
+```
+
+
 ## TODOs
 
-- [ ] add scripts for setting up on students / local server
-    - [ ] organize makefile and other config files (zeppelin version, dockerignore, etc.)
-- [ ] implement relational algebra in spark (on tuples / arrays / dictionaries - whatever is preferred) - details in json notebook (attachment to latest lab)
+- [ ] add scripts for setting up on students / local server:
+    - [ ] zeppelin
+    - [ ] jupyter

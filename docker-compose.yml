@@ -2,6 +2,7 @@ version: '3'
 
 services:
     master:
+        # master node for hadoop
         build: ./cluster
         ports:
             - "9000:9000"
@@ -18,6 +19,7 @@ services:
             - slave1
             - slave2
     slave1:
+        # slave node for hadoop
         build: ./cluster
         ports:
             - "2201:22"
@@ -27,6 +29,7 @@ services:
             - "hdfsdata:/usr/src/hdfsdata"
         command: ./slave.sh
     slave2:
+        # slave node for hadoop
         build: ./cluster
         ports:
             - "2202:22"
@@ -36,11 +39,20 @@ services:
             - "hdfsdata:/usr/src/hdfsdata"
         command: ./slave.sh
     zeppelin:
+        # zeppelin with spark running on a single (local) node
         build: ./zeppelin
         ports:
             - "8080:8080"
         volumes:
-            - "./notebooks:/usr/src/notebooks"
+            - "./zeppelin/notebooks:/usr/src/notebooks"
+            - "./data:/usr/src/data"
+    jupyter:
+        # jupyter+pyspark+spark runnign on a single (local) node
+        build: ./jupyter
+        ports:
+            - "8888:8888"
+        volumes:
+            - "./jupyter/notebooks:/usr/src/notebooks"
             - "./data:/usr/src/data"
 
 networks:

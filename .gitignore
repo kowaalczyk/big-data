@@ -1,5 +1,8 @@
 .idea
 cluster/hadoop-*
 zeppelin/zeppelin-*
+jupyter/spark-*
 data
-notebooks
+solutions
+zeppelin/notebooks/*
+jupyter/notebooks/*
