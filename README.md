@@ -119,6 +119,11 @@ yarn jar hadoop-2.8.5/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.5.jar
 Current setup does not allow manual (local) installation of zeppelin & spark.
 
 
+#### Jupyter & Spark
+
+Current setup does not allow manual (local) installation of jupyter & spark.
+
+
 ## Troubleshooting
 
 ### Apt complainign about invalid IP address (repository not found)
